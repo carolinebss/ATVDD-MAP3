@@ -5,7 +5,7 @@ public class LoggingDecorator extends QueryExecutorDecorator {
 
     @Override
     public void execute(String sql) {
-        System.out.println("[LOG] Tentando executar query...");
+        System.out.println("[LOG] Tentando executar: " + sql);
         super.execute(sql);
     }
 }
