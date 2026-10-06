@@ -1,8 +1,11 @@
 import java.util.List;
 
 public class SecurityValidationDecorator extends QueryExecutorDecorator {
-    private static final List<String> PROIBIDOS = List.of(
-            "DROP", "DELETE", "TRUNCATE", "ALTER", "' OR '1'='1", "--", ";"
+    private static final List<String> PALAVRAS = List.of(
+            "DROP", "DELETE", "TRUNCATE", "ALTER"
+    );
+    private static final List<String> PADROES = List.of(
+            "' OR '1'='1", "--", ";"
     );
 
     public SecurityValidationDecorator(QueryExecutor wrapped) {
@@ -11,20 +14,20 @@ public class SecurityValidationDecorator extends QueryExecutorDecorator {
 
     @Override
     public void execute(String sql) {
-        if (contemPerigo(sql)) {
-            System.out.println("[SECURITY] Query bloqueada por validação de segurança.");
-            return;
-        }
-        super.execute(sql);
-    }
-
-    private boolean contemPerigo(String sql) {
         String maiusculo = sql.toUpperCase();
-        for (String termo : PROIBIDOS) {
-            if (maiusculo.contains(termo)) {
-                return true;
+
+        for (String p : PALAVRAS) {
+            if (maiusculo.contains(p)) {
+                System.out.println("Query bloqueada: palavra perigosa detectada.");
+                return;
             }
         }
-        return false;
+        for (String p : PADROES) {
+            if (maiusculo.contains(p)) {
+                System.out.println("Query bloqueada: possível SQL Injection detectado.");
+                return;
+            }
+        }
+        super.execute(sql);
     }
 }
