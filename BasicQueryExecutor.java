@@ -1,6 +1,6 @@
 public class BasicQueryExecutor implements QueryExecutor {
     @Override
     public void execute(String sql) {
-        System.out.println("Query executada no banco: " + sql);
+       System.out.println("Executando SQL: " + sql);
     }
 }
